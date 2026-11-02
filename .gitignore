@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnp.*
+
+# Next.js
+.next/
+out/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+.vscode/
+
+# Local database and generated artifacts
+storage/*
+!storage/.gitkeep
