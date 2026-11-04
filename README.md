@@ -32,138 +32,75 @@ JourneyLens aims to bridge this gap by combining browser automation with AI-assi
 5. **Analyze with AI** — Identify potential usability friction using the collected evidence and persona context.
 6. **Generate a report** — Present findings, severity, confidence, supporting evidence, and recommendations.
 
-### Important distinction
 
-Personas provide different perspectives for interpreting the same scripted journey. They do not represent real human participants or independently navigate the website.
+## Current demo
 
-JourneyLens is intended to complement functional testing, analytics, and human usability testing—not replace them.
+-   Website: https://www.saucedemo.com/
+-   Journey: 12-step purchase flow
+-   Personas: First-time Shopper, Time-conscious Shopper,
+    Accessibility-conscious Shopper
 
-## 🏗️ Technology Stack
+## Repository
 
-| Component | Technology |
-|---|---|
-| Frontend | Next.js, React, TypeScript |
-| Backend | Node.js, NestJS |
-| Browser automation | Playwright |
-| AI analysis | Claude API (initial provider) |
-| Database | SQLite initially |
-| Package management | npm |
-| Styling | Tailwind CSS |
-
-Infrastructure will evolve as the product grows. PostgreSQL, Redis, BullMQ, and isolated browser workers are planned for later stages.
-
-## 📁 Project Structure
-
-```text
-journeylens/
-├── apps/
-│   ├── web/                  # Next.js frontend
-│   └── api/                  # Backend API
-│
-├── packages/
-│   ├── contracts/            # Shared types and schemas
-│   ├── journey-engine/       # Journey DSL and execution logic
-│   └── scoring-engine/       # Deterministic scoring
-│
-├── storage/                  # Local database and artifacts
-│
-├── README.md
-└── package.json
+``` text
+apps/web                 Next.js dashboard
+apps/api                 NestJS API
+packages/contracts       Shared TypeScript types
+packages/journey-engine  Journey definitions, Playwright executor, axe collector
+packages/scoring-engine  Rule-based and accessibility analysis
+storage/screenshots      Local screenshots
+docs                     Project documentation
 ```
 
-## 🛠️ Development Setup
+`workers/` and `infrastructure/` are future targets, not implemented.
+Browser execution currently lives in `packages/journey-engine`.
 
-### Prerequisites
+## Quick start
 
-- Node.js
-- npm
-- Git
+Requirements: Node.js 20+, npm, Git.
 
-### Clone the repository
-
-```bash
-git clone <repository-url>
-cd journeylens
-```
-
-### Install dependencies
-
-Frontend and backend dependencies will be installed independently as their applications are initialized.
-
-```bash
-cd apps/web
+``` bash
 npm install
+npx playwright install chromium
+npm run build -w @journeylens/contracts
+npm run build -w @journeylens/scoring-engine
+npm run build -w @journeylens/journey-engine
+npm run build -w @journeylens/api
 ```
 
-### Start the frontend
+Terminal 1:
 
-```bash
-npm run dev
+``` bash
+npm run start:dev -w @journeylens/api
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Terminal 2:
 
-Backend setup instructions will be added as the API implementation takes shape.
+``` bash
+npm run dev -w web -- --port 3001
+```
 
-## 🚀 Development Roadmap
+Dashboard: http://localhost:3001\
+API: http://localhost:3000
 
-### Phase 1 — Foundation
-- [ ] Initialize monorepo
-- [ ] Set up Next.js frontend
-- [ ] Set up NestJS backend
-- [ ] Establish shared TypeScript contracts
+``` bash
+curl http://localhost:3000/health
+curl -X POST http://localhost:3000/evaluations -H "Content-Type: application/json"
+```
 
-### Phase 2 — Journey Engine
-- [ ] Define Journey DSL
-- [ ] Validate journey definitions
-- [ ] Implement supported browser actions
-- [ ] Add expected outcome verification
+## Documentation
 
-### Phase 3 — Browser Automation
-- [ ] Integrate Playwright
-- [ ] Execute scripted journeys
-- [ ] Support isolated persona contexts
-- [ ] Capture screenshots and browser evidence
+-   [Architecture](ARCHITECTURE.md)
+-   [Project status](PROJECT_STATUS.md)
+-   [Local setup](LOCAL_SETUP.md)
+-   [Task breakdown](TASK_BREAKDOWN.md)
 
-### Phase 4 — AI Analysis
-- [ ] Integrate Claude API
-- [ ] Design structured analysis prompts
-- [ ] Identify usability friction
-- [ ] Generate evidence-backed recommendations
+## Product principles
 
-### Phase 5 — Scoring and Reporting
-- [ ] Implement deterministic scoring
-- [ ] Add persona-level analysis
-- [ ] Generate usability reports
-- [ ] Track simulation history
-
-### Phase 6 — Productization
-- [ ] Build dashboard
-- [ ] Add journey builder
-- [ ] Add simulation progress tracking
-- [ ] Improve security and execution isolation
-
-## 🧭 Product Principles
-
-- Evidence over assumptions.
-- Repeatability over randomness.
-- Usability insights over vanity scores.
-- Deterministic execution, AI-assisted interpretation.
-- Transparency about limitations and confidence.
-- Complement human usability testing rather than claim to replace it.
-
-## 📌 Project Status
-
-<kbd>Early Development — MVP</kbd>
-
-JourneyLens is currently under active development. The initial focus is to validate the core workflow: scripted browser execution, evidence collection, and useful AI-assisted usability findings.
-
-Features and architecture may evolve as the MVP is developed and tested.
-
-## 🤝 Contributions
-
-This project is currently under active development. Contribution guidelines will be added as the project matures.
-
-## 📄 License
-
-License to be decided.
+1.  Scripted journeys first; autonomous agents are out of MVP scope.
+2.  Personas are simulated evaluation lenses, not real users.
+3.  Findings must be grounded in observable evidence.
+4.  Keep deterministic test results distinct from AI interpretations.
+5.  Axe incomplete checks are manual-review items, not confirmed
+    violations.
+6.  Do not claim conversion prediction or WCAG compliance.
