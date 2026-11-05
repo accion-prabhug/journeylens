@@ -84,16 +84,26 @@ Dashboard: http://localhost:3001\
 API: http://localhost:3000
 
 ``` bash
+# Health check
 curl http://localhost:3000/health
-curl -X POST http://localhost:3000/evaluations -H "Content-Type: application/json"
+
+# Trigger evaluation (default or custom payload)
+curl -X POST http://localhost:3000/evaluations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "journeyId": "JL-JRN-001",
+    "websiteUrl": "https://www.saucedemo.com/",
+    "personaIds": ["first-time-shopper", "time-conscious-shopper", "accessibility-conscious-shopper"]
+  }'
 ```
 
 ## Documentation
 
--   [Architecture](ARCHITECTURE.md)
--   [Project status](PROJECT_STATUS.md)
--   [Local setup](LOCAL_SETUP.md)
--   [Task breakdown](TASK_BREAKDOWN.md)
+-   [Changelog](CHANGELOG.md)
+-   [Architecture](docs/ARCHITECTURE.md)
+-   [Project status](docs/PROJECT_STATUS.md)
+-   [Local setup](docs/LOCAL_SETUP.md)
+-   [Task breakdown](docs/TASK_BREAKDOWN.md)
 
 ## Product principles
 

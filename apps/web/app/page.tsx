@@ -139,6 +139,22 @@ export default function Home() {
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedJourneyId, setSelectedJourneyId] = useState("JL-JRN-001");
+  const [selectedPersonas, setSelectedPersonas] = useState<string[]>([
+    "first-time-shopper",
+    "time-conscious-shopper",
+    "accessibility-conscious-shopper",
+  ]);
+
+  const togglePersona = (id: string) => {
+    if (selectedPersonas.includes(id)) {
+      if (selectedPersonas.length > 1) {
+        setSelectedPersonas(selectedPersonas.filter((p) => p !== id));
+      }
+    } else {
+      setSelectedPersonas([...selectedPersonas, id]);
+    }
+  };
 
   async function runEvaluation() {
     setLoading(true);
@@ -149,10 +165,18 @@ export default function Home() {
       const response = await fetch(`${API_URL}/evaluations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          journeyId: selectedJourneyId,
+          websiteUrl: "https://www.saucedemo.com/",
+          personaIds: selectedPersonas,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error(`API returned ${response.status}`);
+        const errorData = await response.json().catch(() => null);
+        throw new Error(
+          errorData?.message || `API returned ${response.status}`
+        );
       }
 
       const result: Evaluation = await response.json();
@@ -252,33 +276,66 @@ export default function Home() {
             </div>
             <div className="field">
               <label>USER JOURNEY</label>
-              <div className="select-display">
-                Purchase a product <span>⌄</span>
+              <div className="select-display" style={{ position: "relative" }}>
+                <select
+                  value={selectedJourneyId}
+                  onChange={(e) => setSelectedJourneyId(e.target.value)}
+                  style={{
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    width: "100%",
+                    color: "inherit",
+                    fontSize: "inherit",
+                    cursor: "pointer",
+                    paddingRight: "20px",
+                  }}
+                >
+                  <option value="JL-JRN-001">Purchase a product (SauceDemo)</option>
+                </select>
+                <span style={{ pointerEvents: "none", position: "absolute", right: "12px" }}>⌄</span>
               </div>
             </div>
             <button
               className="run-button"
               onClick={runEvaluation}
-              disabled={loading}
+              disabled={loading || selectedPersonas.length === 0}
             >
               {loading ? (
                 <>
                   <span className="spinner" /> Running evaluation...
                 </>
               ) : (
-                <>Run demo evaluation <span>→</span></>
+                <>Run Evaluation <span>→</span></>
               )}
             </button>
           </div>
 
           <div className="persona-row">
             <span className="persona-label">EVALUATION PERSONAS</span>
-            {Object.entries(personaNames).map(([id, name], index) => (
-              <span className="persona-chip" key={id}>
-                <span className={`persona-dot dot-${index}`} />
-                {name}
-              </span>
-            ))}
+            {Object.entries(personaNames).map(([id, name], index) => {
+              const isSelected = selectedPersonas.includes(id);
+              return (
+                <button
+                  type="button"
+                  className="persona-chip"
+                  key={id}
+                  onClick={() => togglePersona(id)}
+                  style={{
+                    opacity: isSelected ? 1 : 0.45,
+                    cursor: "pointer",
+                    border: isSelected ? "1px solid #c9c3ff" : "1px solid var(--border)",
+                    backgroundColor: isSelected ? "#f9f8ff" : "#fff",
+                  }}
+                  title={isSelected ? "Click to deselect persona" : "Click to select persona"}
+                >
+                  <span className={`persona-dot dot-${index}`} />
+                  {name}
+                </button>
+              );
+            })}
           </div>
 
           {error && (
