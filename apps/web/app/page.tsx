@@ -108,8 +108,15 @@ type Evaluation = {
   executions: Execution[];
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+function getApiUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== "undefined" && window.location.hostname) {
+    return `http://${window.location.hostname}:3000`;
+  }
+  return "http://localhost:3000";
+}
 
 const personaNames: Record<string, string> = {
   "first-time-shopper": "First-time shopper",
@@ -136,6 +143,7 @@ function Metric({
 }
 
 export default function Home() {
+  const apiUrl = getApiUrl();
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -157,12 +165,21 @@ export default function Home() {
   };
 
   async function runEvaluation() {
+    const apiUrl = getApiUrl();
+    console.log("[JourneyLens] 'Run Evaluation' clicked");
+    console.log("[JourneyLens] Calling endpoint:", `${apiUrl}/evaluations`);
+    console.log("[JourneyLens] Payload:", {
+      journeyId: selectedJourneyId,
+      websiteUrl: "https://www.saucedemo.com/",
+      personaIds: selectedPersonas,
+    });
+
     setLoading(true);
     setError("");
     setEvaluation(null);
 
     try {
-      const response = await fetch(`${API_URL}/evaluations`, {
+      const response = await fetch(`${apiUrl}/evaluations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -172,6 +189,8 @@ export default function Home() {
         }),
       });
 
+      console.log("[JourneyLens] Response status:", response.status);
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new Error(
@@ -180,8 +199,10 @@ export default function Home() {
       }
 
       const result: Evaluation = await response.json();
+      console.log("[JourneyLens] Evaluation succeeded:", result);
       setEvaluation(result);
     } catch (err) {
+      console.error("[JourneyLens] Evaluation failed:", err);
       setError(
         err instanceof Error
           ? err.message
@@ -299,6 +320,7 @@ export default function Home() {
               </div>
             </div>
             <button
+              type="button"
               className="run-button"
               onClick={runEvaluation}
               disabled={loading || selectedPersonas.length === 0}
@@ -578,14 +600,14 @@ export default function Home() {
                             <div className="evidence-block">
                               <h4>Screenshot</h4>
                               <a
-                                href={`${API_URL}/screenshots/${encodeURIComponent(
+                                href={`${apiUrl}/screenshots/${encodeURIComponent(
                                   step.screenshotPath.split("/").pop() ?? "",
                                 )}`}
                                 target="_blank"
                                 rel="noreferrer"
                               >
                                 <img
-                                  src={`${API_URL}/screenshots/${encodeURIComponent(
+                                  src={`${apiUrl}/screenshots/${encodeURIComponent(
                                     step.screenshotPath.split("/").pop() ?? "",
                                   )}`}
                                   alt={`Screenshot for ${step.stepId}`}

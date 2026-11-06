@@ -17,6 +17,7 @@ export class EvaluationsController {
   @Post()
   @HttpCode(HttpStatus.OK)
   runEvaluation(@Body() dto?: TriggerEvaluationRequestDto) {
+    console.log('[EvaluationsController] >>> POST /evaluations received with payload:', dto);
     return this.evaluationsService.runEvaluation(dto);
   }
 }
