@@ -53,6 +53,8 @@ All notable changes implemented in branch `JOUR-20` compared to `main`.
 A   CHANGELOG.md
 M   .gitignore
 M   README.md
+M   docs/LOCAL_SETUP.md
+M   docs/PROJECT_STATUS.md
 M   packages/contracts/package.json
 M   packages/contracts/src/index.ts
 A   packages/journey-engine/src/journeys/index.ts
