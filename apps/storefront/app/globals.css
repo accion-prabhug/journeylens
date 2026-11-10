@@ -1053,6 +1053,24 @@ button:focus-visible {
   font-size: 0.95rem;
 }
 
+.demo-credentials {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.demo-credentials ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.demo-credentials a {
+  justify-self: start;
+}
+
 .checkbox-row {
   flex-direction: row !important;
   align-items: center;

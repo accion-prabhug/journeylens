@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import {
-  DEMO_ACCOUNT,
+  DEMO_ACCOUNTS,
   getDemoAccounts,
   saveDemoAccounts,
   setDemoSession,
@@ -161,8 +161,15 @@ export default function AuthForm({ mode }: { mode: AuthMode }) {
           )}
 
           {mode === "login" && (
-            <div className="form-row">
-              <span>Demo: {DEMO_ACCOUNT.email} / {DEMO_ACCOUNT.password}</span>
+            <div className="demo-credentials">
+              <span>Demo accounts</span>
+              <ul>
+                {DEMO_ACCOUNTS.map((account) => (
+                  <li key={account.email}>
+                    {account.email} / {account.password}
+                  </li>
+                ))}
+              </ul>
               <Link href="/forgot-password">Forgot password?</Link>
             </div>
           )}
