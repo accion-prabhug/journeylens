@@ -123,6 +123,27 @@ You can execute a journey in either of two ways:
     }'
   ```
 
+### Run the storefront from Windows Command Prompt
+
+Open Command Prompt, then run:
+
+``` bash
+npm install
+npm run dev:storefront
+```
+
+Once Next.js reports that it is ready, open http://localhost:3002 in your browser. Keep the Command Prompt window open while using the storefront; press `Ctrl+C` to stop it.
+
+The storefront sign-in page provides three demo accounts:
+
+| Email | Password |
+| --- | --- |
+| `hello@luxecart.com` | `password123` |
+| `alex@luxecart.com` | `alex12345` |
+| `jordan@luxecart.com` | `jordan12345` |
+
+These are local demo credentials only; accounts are stored in the browser and are not protected by a production authentication service.
+
 ## Documentation
 
 -   [Changelog](CHANGELOG.md)
