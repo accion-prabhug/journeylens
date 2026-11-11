@@ -71,20 +71,28 @@ The storefront runs at http://localhost:3002. Leave the Command Prompt window op
 
 ## Run evaluation
 
+Trigger evaluation with payload:
+
 ``` bash
 curl -X POST http://localhost:3000/evaluations \
-  -H "Content-Type: application/json"
+  -H "Content-Type: application/json" \
+  -d '{
+    "journeyId": "JL-JRN-001",
+    "websiteUrl": "https://www.saucedemo.com/",
+    "personaIds": ["first-time-shopper", "time-conscious-shopper", "accessibility-conscious-shopper"]
+  }'
 ```
 
-Save output:
+Save output to file:
 
 ``` bash
 curl -s -X POST http://localhost:3000/evaluations \
   -H "Content-Type: application/json" \
+  -d '{"journeyId": "JL-JRN-001"}' \
   -o evaluation.json
 ```
 
-Or use the dashboard's Run demo evaluation control.
+Or click **Run Evaluation →** on the web dashboard ([http://localhost:3001](http://localhost:3001)).
 
 ## Screenshots
 
